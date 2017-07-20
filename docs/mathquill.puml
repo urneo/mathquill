@@ -1,0 +1,122 @@
+@startuml
+skinparam classBackgroundColor White
+skinparam classArrowColor Black
+skinparam classBorderColor Black
+skinparam stereotypeCBackgroundColor Gray
+
+hide circle
+hide members
+
+Node <|-- MathElement
+Node <|-- TextBlock
+Node <|-- TextPiece
+
+Digit -u-|> VanillaSymbol
+
+MathCommand -u-|> MathElement
+MathBlock -u-|> MathElement
+RootMathBlock -u-|> MathBlock
+RootMathBlock -u-|> RootTextBlock
+Symbol -u-|> MathCommand
+Symbol <|-- Variable
+Symbol <|-- VanillaSymbol
+Symbol <|-- BinaryOperator
+Symbol <|-- NonSymbolaSymbol
+Symbol <|-- OperatorName
+
+TextField -u-|> EditableField
+MathField -u-|> EditableField
+EditableField -u-|> AbstractMathQuill
+StaticMath -u-|> AbstractMathQuill
+AbstractMathQuill --> Controller
+
+Letter -u-|> Variable
+
+Selection -u-|> Fragment
+Cursor -u-|> Point
+
+class MathElement <Node>
+class TextBlock <Node>
+class TextPiece <Node>
+
+class AbstractMathQuill {
+    config (opts)
+    el()
+    text()
+    latex(latex)
+    html()
+    reflow()
+}
+
+class EditableField {
+    focus()
+    blur()
+    write (latex)
+    cmd (cmd)
+    select()
+    clearSelection()
+    moveToDirEnd (dir)
+    moveToLeftEnd()
+    moveToRightEnd()
+    keystroke (key)
+    typedText (text)
+    dropEmbedded (pageX, pageY, options)
+    clickAt (clientX, clientY, target)
+    ignoreNextMousedown (fn)
+}
+
+class MathField <math.js> {
+    exportLatex()
+    renderLatexMath (latex)
+    renderLatexText (latex)
+
+}
+
+class Controller <latex.js> {
+    writeLatex （latex)
+    renderLatexMath (latex)
+    renderLatexText (latex)
+}
+
+class keystroke {
+    +backspace()
+    +deleteForward()
+    -deleteDir (dir)
+    -ctrlDeleteDir (dir)
+    +moveLeft()
+    +moveRight()
+    -moveDir (dir)
+    +moveUp()
+    +moveDown()
+    -moveUpDown (self, dir)
+}
+
+class TextBlock {
+    replaces (replacedText)
+    createLeftOf (cursor)
+    parser ()
+    textContents ()
+    moveTowards (dir, cursor)
+    moveOutOf (dir, cursor)
+    selectOutOf (dir, cursor)
+    deleteOutOf (dir, cursor)
+    write (cursor, ch)
+    seek (pageX, cursor)
+    blur (cursor)
+
+}
+
+class TextPiece {
+    init (text)
+    appendText (text)
+    prependText (text)
+    insTextAtDirEnd (text, dir)
+    splitRight (i)
+    moveTowards (dir, cursor)
+    deleteTowards (dir, cursor)
+    selectTowards (dir, cursor)
+    latex()
+
+}
+
+@enduml
