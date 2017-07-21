@@ -33,6 +33,10 @@ BinaryOperator <|-- Inequality
 BinaryOperator <|-- Equality
 BinaryOperator <|-- neq
 
+MathBlock --u-> CharCmds
+MathBlock --u-> LatexCmds
+MathBlock .l.> MathCommand
+
 TextField -u-|> EditableField
 MathField -u-|> EditableField
 EditableField -u-|> AbstractMathQuill
@@ -95,7 +99,7 @@ class RootTextBlock <math.js> {
     keystroke (key)
 }
 
-class MathField <math.js> {
+class MathField <math.js> #Moccasin {
     -RootBlock : RootMathBlock
     exportLatex()
     renderLatexMath (latex)
@@ -103,7 +107,7 @@ class MathField <math.js> {
 
 }
 
-class StaticMath <math.js> {
+class StaticMath <math.js> #Moccasin {
     -RootBlock : MathBlock
     +init()
     +latex()
@@ -125,15 +129,30 @@ class Controller <latex.js> {
 
 ' -------------------------------------------
 class MathElement <math.js>
-class RootMathBlock <math.js>
-class MathCommand <math.js>
+class RootMathBlock <math.js> #LemonChiffon
+class MathCommand <math.js> #LightGoldenRodYellow {
+    +init (ctrlSeq, htmlTemplate, textTemplate)
+    +replaces (replacedFragment)
+    +isEmpty()
+    +parser()
+    +createLeftOf (cursor)
+    +createBlocks()
+    ..
+    +placeCursor (cursor)
+    +moveTowards (dir, cursor, updown)
+    +deleteTowards (dir, cursor)
+    +selectTowards (dir, cursor)
+    +selectChildren()
+    +unselectInto (dir, cursor)
+    +seek (pageX, cursor)
+}
 class BinaryOperator <math.js>
 class VanillaSymbol <math.js>
 class Symbol <math.js>
 class latexMathParser <latex.js>
 class Parser <parser.util.js>
 
-class MathBlock <math.js> {
+class MathBlock <math.js> #LemonChiffon {
     -join(methodName)
     +html()
     +latex()
