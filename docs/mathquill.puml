@@ -8,15 +8,15 @@ hide circle
 hide members
 
 Node <|-- MathElement
-Node <|-- TextBlock
-Node <|-- TextPiece
+' Node <|-- TextBlock
+' Node <|-- TextPiece
 
 Digit -u-|> VanillaSymbol
 
 MathCommand -u-|> MathElement
 MathBlock -u-|> MathElement
 RootMathBlock -u-|> MathBlock
-RootMathBlock -u-|> RootTextBlock
+RootTextBlock -u-|> RootMathBlock
 Symbol -u-|> MathCommand
 Symbol <|-- Variable
 Symbol <|-- VanillaSymbol
@@ -24,40 +24,66 @@ Symbol <|-- BinaryOperator
 Symbol <|-- NonSymbolaSymbol
 Symbol <|-- OperatorName
 
+MathCommand <|-- Bracket
+MathCommand <|-- SquareRoot
+MathCommand <|-- Fraction
+
+BinaryOperator <|-- PlusMinus
+BinaryOperator <|-- Inequality
+BinaryOperator <|-- Equality
+BinaryOperator <|-- neq
+
 TextField -u-|> EditableField
 MathField -u-|> EditableField
 EditableField -u-|> AbstractMathQuill
+EditableField --> keystroke
 StaticMath -u-|> AbstractMathQuill
-AbstractMathQuill --> Controller
+AbstractMathQuill -r-> Controller
+Controller --> latexMathParser
+latexMathParser --> Parser
 
 Letter -u-|> Variable
 
 Selection -u-|> Fragment
 Cursor -u-|> Point
+Node ..> Selection
+Node ..> Fragment
+Node ..> Cursor
 
-class MathElement <Node>
-class TextBlock <Node>
-class TextPiece <Node>
+class Bracket <commands.js>
+class SquareRoot <commands.js>
+class Fraction <commands.js>
 
-class AbstractMathQuill {
+class neq <advancedSymbols.js>
+
+class Node <tree.js>
+class Fragment <tree.js>
+class Point <tree.js>
+class Cursor <cursor.js>
+class Selection <cursor.js>
+
+class AbstractMathQuill <publicapi.js> {
     config (opts)
     el()
     text()
     latex(latex)
     html()
     reflow()
+    revert()
 }
 
-class EditableField {
+class EditableField <math.js> {
     focus()
     blur()
     write (latex)
-    cmd (cmd)
+    cmd (latex)
     select()
     clearSelection()
+    ..
     moveToDirEnd (dir)
     moveToLeftEnd()
     moveToRightEnd()
+    ..
     keystroke (key)
     typedText (text)
     dropEmbedded (pageX, pageY, options)
@@ -65,12 +91,31 @@ class EditableField {
     ignoreNextMousedown (fn)
 }
 
+class RootTextBlock <math.js> {
+    keystroke (key)
+}
+
 class MathField <math.js> {
+    -RootBlock : RootMathBlock
     exportLatex()
     renderLatexMath (latex)
     renderLatexText (latex)
 
 }
+
+class StaticMath <math.js> {
+    -RootBlock : MathBlock
+    +init()
+    +latex()
+}
+
+class TextField <text.js> {
+    -RootBlock : RootTextBlock
+}
+
+MathField ..> RootMathBlock
+StaticMath ..> MathBlock
+TextField ..> RootTextBlock
 
 class Controller <latex.js> {
     writeLatex （latex)
@@ -78,7 +123,33 @@ class Controller <latex.js> {
     renderLatexText (latex)
 }
 
-class keystroke {
+' -------------------------------------------
+class MathElement <math.js>
+class RootMathBlock <math.js>
+class MathCommand <math.js>
+class BinaryOperator <math.js>
+class VanillaSymbol <math.js>
+class Symbol <math.js>
+class latexMathParser <latex.js>
+class Parser <parser.util.js>
+
+class MathBlock <math.js> {
+    -join(methodName)
+    +html()
+    +latex()
+    +text()
+    +keystroke(key, e, ctrlr)
+    +moveOutOf(dir, cursor, updown)
+    +selectOutOf(dir, cursor)
+    +deleteOutOf(dir, cursor)
+    +seek(pageX, cursor)
+    +chToCmd(ch, options)
+    +write(curor, cb)
+    +focus()
+    +blur()
+}
+
+class keystroke <keystroke.js> {
     +backspace()
     +deleteForward()
     -deleteDir (dir)
@@ -91,32 +162,37 @@ class keystroke {
     -moveUpDown (self, dir)
 }
 
-class TextBlock {
-    replaces (replacedText)
-    createLeftOf (cursor)
-    parser ()
-    textContents ()
-    moveTowards (dir, cursor)
-    moveOutOf (dir, cursor)
-    selectOutOf (dir, cursor)
-    deleteOutOf (dir, cursor)
-    write (cursor, ch)
-    seek (pageX, cursor)
-    blur (cursor)
+' class TextBlock <Node>
+' class TextPiece <Node>
+' LatexCommandInput --> TextBlock
+' TextBlock --> TextPiece
+' TextBlock ..> Point
 
-}
+' class TextBlock <Node> {
+'     replaces (replacedText)
+'     createLeftOf (cursor)
+'     parser ()
+'     textContents ()
+'     moveTowards (dir, cursor)
+'     moveOutOf (dir, cursor)
+'     selectOutOf (dir, cursor)
+'     deleteOutOf (dir, cursor)
+'     write (cursor, ch)
+'     seek (pageX, cursor)
+'     blur (cursor)
 
-class TextPiece {
-    init (text)
-    appendText (text)
-    prependText (text)
-    insTextAtDirEnd (text, dir)
-    splitRight (i)
-    moveTowards (dir, cursor)
-    deleteTowards (dir, cursor)
-    selectTowards (dir, cursor)
-    latex()
+' }
 
-}
+' class TextPiece <Node> {
+'     init (text)
+'     appendText (text)
+'     prependText (text)
+'     insTextAtDirEnd (text, dir)
+'     splitRight (i)
+'     moveTowards (dir, cursor)
+'     deleteTowards (dir, cursor)
+'     selectTowards (dir, cursor)
+'     latex()
+' }
 
 @enduml

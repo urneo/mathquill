@@ -83,6 +83,7 @@ Controller.open(function(_, super_) {
     var all = Parser.all;
     var eof = Parser.eof;
 
+    // NOTE: parse MathBlock
     var block = latexMathParser.skip(eof).or(all.result(false)).parse(latex);
 
     if (block && !block.isEmpty()) {
