@@ -39,14 +39,21 @@ MathBlock .l.> MathCommand
 
 TextField -u-|> EditableField
 MathField -u-|> EditableField
+TextField .l> MathField
+MathField ..> RootMathBlock
+StaticMath ..> MathBlock
+TextField ...> RootTextBlock
 EditableField -u-|> AbstractMathQuill
-EditableField --> keystroke
+EditableField -> keystroke
 StaticMath -u-|> AbstractMathQuill
 AbstractMathQuill -r-> Controller
 Controller --> latexMathParser
+' Controller ....> Cursor
 latexMathParser --> Parser
 
 Letter -u-|> Variable
+class Variable <latex.js>
+class Letter <basicSymbols.js>
 
 Selection -u-|> Fragment
 Cursor -u-|> Point
@@ -54,17 +61,17 @@ Node ..> Selection
 Node ..> Fragment
 Node ..> Cursor
 
+class Node <tree.js>
+class Fragment <tree.js>
+class Point <tree.js>
+class Cursor <cursor.js> #Beige
+class Selection <cursor.js> #Beige
+
 class Bracket <commands.js>
 class SquareRoot <commands.js>
 class Fraction <commands.js>
 
 class neq <advancedSymbols.js>
-
-class Node <tree.js>
-class Fragment <tree.js>
-class Point <tree.js>
-class Cursor <cursor.js>
-class Selection <cursor.js>
 
 class AbstractMathQuill <publicapi.js> {
     config (opts)
@@ -76,7 +83,7 @@ class AbstractMathQuill <publicapi.js> {
     revert()
 }
 
-class EditableField <math.js> {
+class EditableField <publicapi.js> {
     focus()
     blur()
     write (latex)
@@ -95,10 +102,6 @@ class EditableField <math.js> {
     ignoreNextMousedown (fn)
 }
 
-class RootTextBlock <math.js> {
-    keystroke (key)
-}
-
 class MathField <math.js> #Moccasin {
     -RootBlock : RootMathBlock
     exportLatex()
@@ -113,15 +116,11 @@ class StaticMath <math.js> #Moccasin {
     +latex()
 }
 
-class TextField <text.js> {
+class TextField <text.js> #Moccasin {
     -RootBlock : RootTextBlock
 }
 
-MathField ..> RootMathBlock
-StaticMath ..> MathBlock
-TextField ..> RootTextBlock
-
-class Controller <latex.js> {
+class Controller <latex.js> #LightBlue {
     writeLatex （latex)
     renderLatexMath (latex)
     renderLatexText (latex)
@@ -129,6 +128,10 @@ class Controller <latex.js> {
 
 ' -------------------------------------------
 class MathElement <math.js>
+
+class RootTextBlock <math.js> #LemonChiffon {
+    keystroke (key)
+}
 class RootMathBlock <math.js> #LemonChiffon
 class MathCommand <math.js> #LightGoldenRodYellow {
     +init (ctrlSeq, htmlTemplate, textTemplate)
