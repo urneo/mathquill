@@ -1,0 +1,112 @@
+@startuml
+skinparam classBackgroundColor White
+skinparam classArrowColor Black
+skinparam classBorderColor Black
+skinparam stereotypeCBackgroundColor Gray
+
+hide circle
+' hide members
+
+Node --> Fragment
+MathElement -l-|> Node
+MathElement <|-r- MathBlock
+MathElement <|-- MathCommand
+MathCommand <|-- Symbol
+Symbol <|-r- VanillaSymbol
+Symbol <|-r- BinaryOperator
+MathBlock ..> MathCommand
+MathBlock --> LatexCmds
+MathBlock --> CharCmds
+
+class Fragment <tree.js> {
+    #init (withDir, oppDir, dir)
+}
+class Node <tree.js> {
+    -{static} byId = {}
+    -jQ = $()
+    +children : Fragment
+    --
+    #jQadd (jQ)
+    #jQize (jQ)
+    #bubble : iterator
+    #postOrder : iterator
+    ..
+    +uniqueNodeId () : int
+    +createDir (dir, cursor)
+    +createLeftOf (el)
+    +selectChildren (leftEnd, rightEnd)
+}
+
+class MathElement <math.js> {
+    +finalizeInsert (options, cursor)
+}
+
+class MathCommand <math.js> {
+    +ctrlSeq : string
+    +htmlTemplate : string
+    +textTemplate : string
+    --
+    #init (ctrlSeq, htmlTemplate, textTemplate)
+    +html ()
+    +latex ()
+    ..
+    +replaces (replacedFragment)
+    +isEmpty ()
+    +parser ()
+    +createLeftOf (cursor)
+    +createBlocks ()
+    +placeCursor (cursor)
+    +moveTowards (dir, cursor, updown)
+    +deleteTowards (dir, cursor)
+    +selectTowards (dir, cursor)
+    +selectChildren ()
+    +unselectInto (dir, cursor)
+    +seek (ageX, cursor)
+    +numBlocks ()
+}
+
+class Symbol {
+    +text : string
+    -placeCursor : noop
+    --
+    #init (ctrlSeq, html, text)
+    +latex() : ctrlSeq
+    +text() : textTemplate
+    +isEmpty() : true
+    ..
+    +parser ()
+    +numBlocks ()
+    +replaces (replacedFragment)
+    +moveTowards (dir, cursor)
+    +deleteTowards (dir, cursor)
+    +seek (ageX, cursor)
+}
+
+class MathBlock <math.js> {
+    -join (methodName) : string
+    -chToCmd (ch, options) : MathCommand
+    ..
+    +html () : string
+    +text () : string
+    +latex () : string
+    +write (cursor, ch)
+    +keystroke (key, e, ctrlr)
+    ..
+    +moveOutOf (dir, cursor, updown)
+    +selectOutOf (dir, cursor)
+    +deleteOutOf (dir, cursor)
+    +seek (pageX, cursor)
+    ..
+    +focus ()
+    +blur ()
+}
+
+class VanillaSymbol {
+    #init (ch, html)
+}
+
+class BinaryOperator {
+    #init (ctrlSeq, html, text)
+}
+
+@enduml

@@ -52,7 +52,7 @@ Controller --> latexMathParser
 latexMathParser --> Parser
 
 Letter -u-|> Variable
-class Variable <latex.js>
+class Variable <basicSymbols.js>
 class Letter <basicSymbols.js>
 
 Selection -u-|> Fragment
