@@ -48,6 +48,7 @@ EditableField -> keystroke
 StaticMath -u-|> AbstractMathQuill
 AbstractMathQuill -r-> Controller
 Controller --> latexMathParser
+' Controller ....> MathBlock : root
 ' Controller ....> Cursor
 latexMathParser --|> Parser
 

@@ -166,14 +166,14 @@ class latexMathParser <latex.js> {
     -succeed = Parser.succeed
     -fail = Parser.fail
     --
-    #variable
-    #symbol
-    #controlSequence
-    #command
-    #mathGroup
-    #mathBlock
-    #mathSequence
-    #optMathBlock
+    #variable : Parser
+    #symbol : Parser
+    #controlSequence : Parser
+    #command : Parser
+    #mathGroup : Parser
+    #mathBlock : Parser
+    #mathSequence : Parser
+    #optMathBlock : Parser
     ..
     +block = mathBlock
     +optBlock = optMathBlock
