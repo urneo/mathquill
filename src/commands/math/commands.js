@@ -617,7 +617,7 @@ var Bracket = P(P(MathCommand, DelimsMixin), function(_, super_) {
       brack = this, side = brack.side;
       if (brack.replacedFragment) brack.side = 0; // wrapping seln, don't be one-sided
       else if (cursor[-side]) { // elsewise, auto-expand so ghost is at far end
-        brack.replaces(Fragment(cursor[-side], cursor.parent.ends[-side], side));
+        brack.replaces(Fragment(cursor[-side], cursor.parent.ends[-side], side)); //NOTE: 添加右括号时，自动匹配左括号
         cursor[-side] = 0;
       }
       super_.createLeftOf.call(brack, cursor);
