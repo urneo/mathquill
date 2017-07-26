@@ -1,0 +1,27 @@
+@startuml
+
+skinparam classBackgroundColor White
+skinparam classArrowColor Black
+skinparam classBorderColor Black
+skinparam stereotypeCBackgroundColor Gray
+
+hide circle
+hide members
+
+class parent <Node>
+class leftward <Node>
+class middle <Node>
+class rightward <Node>
+
+parent ...> leftward : ends[L]
+parent <-- leftward : parent
+parent <-- middle : parent
+parent <-- rightward : parent
+parent ...> rightward : ends[R]
+
+leftward -r-> middle : R
+middle -r-> rightward : R
+rightward ..> middle : L
+middle ..> leftward : L
+
+@enduml

@@ -49,7 +49,7 @@ StaticMath -u-|> AbstractMathQuill
 AbstractMathQuill -r-> Controller
 Controller --> latexMathParser
 ' Controller ....> Cursor
-latexMathParser --> Parser
+latexMathParser --|> Parser
 
 Letter -u-|> Variable
 class Variable <basicSymbols.js>

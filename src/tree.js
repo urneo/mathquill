@@ -129,7 +129,7 @@ var Node = P(function(_) {
     cursor[dir] = node.adopt(cursor.parent, cursor[L], cursor[R]);
     return node;
   };
-  _.createLeftOf = function(el) { return this.createDir(L, el); };
+  _.createLeftOf = function(cursor) { return this.createDir(L, cursor); };
 
   _.selectChildren = function(leftEnd, rightEnd) {
     return Selection(leftEnd, rightEnd);

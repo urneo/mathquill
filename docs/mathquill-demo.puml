@@ -1,0 +1,31 @@
+@startuml
+
+skinparam classBackgroundColor White
+skinparam classArrowColor Black
+skinparam classBorderColor Black
+skinparam stereotypeCBackgroundColor Gray
+
+hide circle
+hide members
+
+class exp
+
+exp <-- x
+exp <-- "="
+exp <-- frac
+
+frac <-- numer
+frac <-- denom
+
+numer <-- "-"
+numer <-- b
+numer <-- "±"
+numer <-- sqrt
+
+sqrt <-- "√"
+sqrt <-- "﹋"
+
+"﹋" <-- "b"
+"﹋" <-- supsub
+
+@enduml

@@ -7,23 +7,26 @@ skinparam stereotypeCBackgroundColor Gray
 hide circle
 ' hide members
 
-Node --> Fragment
+Node -d-> Fragment : children
+Selection -u-|> Fragment
 MathElement -l-|> Node
 MathElement <|-r- MathBlock
 MathElement <|-- MathCommand
 MathCommand <|-- Symbol
+MathCommand ..r.> Parser
 Symbol <|-r- VanillaSymbol
 Symbol <|-r- BinaryOperator
 MathBlock ..> MathCommand
 MathBlock --> LatexCmds
 MathBlock --> CharCmds
 
-class Fragment <tree.js> {
-    #init (withDir, oppDir, dir)
-}
+Point <|-- Cursor
+
 class Node <tree.js> {
     -{static} byId = {}
     -jQ = $()
+    #parent : int
+    #ends = {}
     +children : Fragment
     --
     #jQadd (jQ)
@@ -35,6 +38,17 @@ class Node <tree.js> {
     +createDir (dir, cursor)
     +createLeftOf (el)
     +selectChildren (leftEnd, rightEnd)
+}
+class Fragment <tree.js> {
+    -ends = {}
+    #init (withDir, oppDir, dir)
+    +each : iterator
+}
+class Selection <cursor.js> {
+    #init ()
+    +adopt ()
+    +clear ()
+    +join (methodName)
 }
 
 class MathElement <math.js> {
@@ -52,7 +66,7 @@ class MathCommand <math.js> {
     ..
     +replaces (replacedFragment)
     +isEmpty ()
-    +parser ()
+    +parser () : Parser
     +createLeftOf (cursor)
     +createBlocks ()
     +placeCursor (cursor)
@@ -61,7 +75,7 @@ class MathCommand <math.js> {
     +selectTowards (dir, cursor)
     +selectChildren ()
     +unselectInto (dir, cursor)
-    +seek (ageX, cursor)
+    +seek (pageX, cursor)
     +numBlocks ()
 }
 
@@ -107,6 +121,89 @@ class VanillaSymbol {
 
 class BinaryOperator {
     #init (ctrlSeq, html, text)
+}
+
+class Point <tree.js> {
+    #parent : int
+    #leftward : int
+    #rightward : int
+}
+
+class Cursor <cursor.js> {
+    #init (initParent, options)
+    +show ()
+    +hide ()
+    ..
+    +withDirInsertAt (dir, parent, withDir, oppDir)
+    +insDirOf (dir, el)
+    +insLeftOf (el)
+    +insRightOf (el)
+    +insAtDirEnd (dir, el)
+    +insAtLeftEnd (el)
+    +insAtRightEnd (el)
+    ..
+    +jumpUpDown (from, to)
+    +offset ()
+    +unwrapGramp ()
+    ..
+    +startSelection ()
+    +endSelection ()
+    +select ()
+    +clearSelection ()
+    +deleteSelection ()
+    +replaceSelection ()
+}
+
+latexMathParser --|> Parser
+latexMathParser .l.> MathBlock
+
+class latexMathParser <latex.js> {
+    -string = Parser.string
+    -regex = Parser.regex
+    -letter = Parser.letter
+    -any = Parser.any
+    -optWhitespace = Parser.optWhitespace
+    -succeed = Parser.succeed
+    -fail = Parser.fail
+    --
+    #variable
+    #symbol
+    #controlSequence
+    #command
+    #mathGroup
+    #mathBlock
+    #mathSequence
+    #optMathBlock
+    ..
+    +block = mathBlock
+    +optBlock = optMathBlock
+}
+
+class Parser <parser.util.js> {
+    -letter : regex
+    -letters : regex
+    -digit : regex
+    -digits : regex
+    -whitespace : regex
+    -optWhitespace : regex
+    -_ : body
+    -body : function(stream, onSuccess, onFailure)
+    --
+    #init (body)
+    +parse (stream)
+    +or (alternative) : Parser
+    +then (next) : Parser
+    +many () : Parser
+    +times (min, max)
+    +result (res) : Parser
+    ..
+    +atMost (n)
+    +atLeast (n)
+    +map (fn)
+    +skip (two)
+    ..
+    -string (str)
+    -regex (re) : Parser
 }
 
 @enduml
